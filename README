@@ -1,0 +1,14 @@
+Wanted to try out websockets/redis-pubsub
+
+Created a localhost only chatter program.
+
+to run:
+please install redis version 2.0+ on your local machine and start ./redis-server with default config 
+
+from project directory:
+gem install bundler(if you don't have it)
+bundle install
+ruby sockie.rb
+
+open up 2 seperate windows of index.html in a websocket compatible browser(ie Chrome)
+start chatting!
