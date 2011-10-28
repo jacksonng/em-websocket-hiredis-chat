@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
+  <script>
+  $(document).ready(function(){
+    if(!("WebSocket" in window)) {
+      alert("The Browser does not support websockets!");
+      return;
+    }
+
+	  user = '';
+    
+    ws = new WebSocket("ws://localhost:8080");
+    ws.onmessage = function(event) { 
+      //console.log(event.data);
+      var data = jQuery.parseJSON( event.data )
+      var p = $("<div class='chat_line' style=''><b>"+data.username+":</b>  "+data.message+"</div>");
+      $('#chat_display').append(p);
+      //p.slideDown(940);
+      $('#chat_display').scrollTop( $('#chat_display').prop("scrollHeight") );
+      //p.slideDown(940);
+    };
+    ws.onclose = function() {
+      //alert("socket closed");
+    };
+    ws.onopen = function() {
+      //alert("connected...");
+    };
+    
+    $('#chat_in').keydown( function(event){
+      if (event.keyCode == '13') {
+        event.preventDefault();
+        msg = $(this).val();
+        ws.send( '{ "username" : "'+user+'", "message" : "'+msg+'"}' );
+        $(this).val('');
+      }
+    });
+    
+    $('#chat_in').val('');
+    
+    $('#start_chat_button').click(function(){
+      if( $('#name_input').val().length == 0 ){
+        $('#name_input').addClass('highlight');
+      } else {
+        user = $('#name_input').val();
+        $('#name_window').hide();
+        $('#chat_window').show();
+      }
+    });
+    
+    $('#name_input').focus(function(){
+      $(this).removeClass('highlight');
+    });
+  });
+  </script>
+  
+  <style type="text/css">
+    .input_class {font: 18px Arial, sans-serif normal; border: 1px solid #B5B8C8;}
+    .highlight { border: 1px solid #DD7870; background-color: #FFFFC3;}
+    .chatline { white-space: pre-wrap;}
+    #name_window{
+      width:250px; 
+      height:70px;  
+      margin:auto; 
+      margin-top: 50px; 
+      border-radius:15px;
+      
+      background-color: #F2F2F2;
+      font-size: 14px;
+      color: #666;
+      padding: 5em;
+    }
+    #chat_window{
+      margin-top: 50px;
+      display:none; 
+      width:320px; 
+      height:400px; 
+      background-color: #F2F2F2;
+      margin:auto;
+      border-radius:5px;
+    }
+  </style>
+</head>
+<body style="font: normal x-small verdana;">
+  <div id="name_window">
+      <lable style="">ENTER THY NAME:</lable><br/>
+      <input id="name_input" type="text" class="input_class"></input><br/>
+      <button id="start_chat_button" type="submit" style="">Start Chatting!</button>
+  </div>
+  <div id="chat_window" style="">
+    <div id="chat_display" style="height:73%;font: normal large Verdana;padding: 1em;overflow: scroll;">
+    </div>
+    <textarea id="chat_in" style="width:300px; height:15%; overflow-y:hidden; resize: none; display:block; margin:auto;font-size: 16px;" ignoreesc="true">
+    </textarea>
+  </div>
+</body>
+</html>
