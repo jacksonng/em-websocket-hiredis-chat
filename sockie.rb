@@ -11,16 +11,7 @@ EM.run do
   redis_publisher = EM::Hiredis.connect
   redis_subscriber = EM::Hiredis.connect
   
-  #puts redis_publisher.connection_completed
-  
-  #puts redis_publisher.connected?.errback{|e| puts e}
-  
-  response_deferrable = redis_publisher.set('foo', 'bar')
-  response_deferrable.errback {|e| puts e}
-  #SET mykey "Hello"
-  
   redis_publisher.callback { puts "Redis now connected" }
-  redis_publisher.onclosed { puts "Redis got error" }
 
   redis_subscriber.subscribe(CHANNEL_NAME)
   puts "subscribing to redis channel: #{CHANNEL_NAME}"
